@@ -1,0 +1,17 @@
+{
+  "name": "Kindle Recall",
+  "short_name": "Recall",
+  "description": "Daily knowledge resurfacing from your Kindle library",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#1C1917",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%231C1917'/><text y='130' x='96' text-anchor='middle' font-size='110' font-family='serif'>📖</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

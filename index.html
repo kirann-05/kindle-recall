@@ -3,717 +3,229 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<meta name="theme-color" content="#1C1917"/>
+<meta name="theme-color" content="#0B0906"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <meta name="apple-mobile-web-app-title" content="Recall"/>
 <title>Kindle Recall</title>
 <link rel="manifest" href="manifest.json"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300;1,9..144,700&family=Syne:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B0906;--bg2:#141110;--bg3:#1C1916;
+  --text:#EDE8DF;--mid:rgba(237,232,223,0.48);--dim:rgba(237,232,223,0.16);
+  --amber:#C98A20;--amber-b:#E0A030;
+  --rule:rgba(237,232,223,0.09);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+.screen{display:none;flex-direction:column;height:100dvh}
+.screen.active{display:flex}
 
-  :root {
-    --cream: #FAF7F2;
-    --cream-dark: #F0EBE1;
-    --ink: #1C1917;
-    --ink-soft: #44403C;
-    --ink-muted: #78716C;
-    --amber: #C2700F;
-    --amber-light: #FEF3C7;
-    --amber-glow: #FDE68A;
-    --green: #15803D;
-    --green-light: #DCFCE7;
-    --red-soft: #FEE2E2;
-    --red: #B91C1C;
-    --border: rgba(28,25,23,0.1);
-    --shadow: 0 4px 24px rgba(28,25,23,0.08);
-    --shadow-card: 0 8px 40px rgba(28,25,23,0.12);
-  }
+#splash{align-items:center;justify-content:center;gap:6px}
+.sp-word{font-family:'Fraunces',serif;font-optical-sizing:auto;font-size:80px;font-weight:700;letter-spacing:-3px;color:var(--text);animation:blurIn 0.9s cubic-bezier(0.22,1,0.36,1) both}
+.sp-rule{width:48px;height:1px;background:var(--amber);animation:fadeUp 0.6s ease 0.5s both}
+.sp-sub{font-family:'Syne',sans-serif;font-size:9px;font-weight:400;letter-spacing:0.26em;text-transform:uppercase;color:var(--mid);animation:fadeUp 0.6s ease 0.65s both}
 
-  html, body {
-    height: 100%;
-    overflow: hidden;
-    background: var(--cream);
-    color: var(--ink);
-    font-family: 'DM Sans', sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
+#home{background:var(--bg);overflow:hidden}
+.home-top{padding:54px 28px 0;display:flex;justify-content:space-between;align-items:flex-start}
+.top-label{font-family:'Syne',sans-serif;font-size:10px;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;color:var(--mid)}
+.streak{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--amber)}
+.home-hero{padding:28px 28px 0}
+.hero-big{font-family:'Fraunces',serif;font-optical-sizing:auto;font-size:clamp(46px,12vw,60px);font-weight:700;line-height:1.0;letter-spacing:-2px;color:var(--text);animation:heroIn 0.7s cubic-bezier(0.22,1,0.36,1) 0.05s both}
+.hero-big em{font-style:italic;font-weight:300;color:var(--mid)}
+.home-rule{height:1px;background:var(--rule);margin:20px 28px 0}
+.home-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:88px}
+.list-item{display:flex;align-items:center;padding:22px 28px;gap:18px;border-bottom:1px solid var(--rule);cursor:pointer;transition:background 0.12s}
+.list-item:active{background:var(--bg2)}
+.list-item:nth-child(1){animation:lineIn 0.5s ease 0.12s both}
+.list-item:nth-child(2){animation:lineIn 0.5s ease 0.20s both}
+.list-item:nth-child(3){animation:lineIn 0.5s ease 0.28s both}
+.li-num{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--dim);min-width:18px}
+.li-body{flex:1;min-width:0}
+.li-title{font-family:'Fraunces',serif;font-optical-sizing:auto;font-size:22px;font-weight:700;color:var(--text);line-height:1.1;letter-spacing:-0.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-title.ital{font-style:italic;font-weight:300;font-size:17px;line-height:1.3;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.li-meta{margin-top:5px;font-size:12px;font-weight:300;color:var(--mid);display:flex;align-items:center;gap:5px}
+.li-dot{width:3px;height:3px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.li-arrow{font-size:16px;color:var(--dim);transition:all 0.15s;flex-shrink:0}
+.list-item:active .li-arrow{transform:translateX(4px);color:var(--amber)}
+.li-tag{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:3px 7px;border-radius:2px;flex-shrink:0}
+.tag-w{background:rgba(201,138,32,0.15);color:var(--amber)}
+.tag-q{background:rgba(237,232,223,0.06);color:var(--mid)}
+.tag-c{background:rgba(80,180,120,0.12);color:#5CB87A}
 
-  /* ── SCREENS ── */
-  .screen { display: none; flex-direction: column; height: 100dvh; overflow: hidden; }
-  .screen.active { display: flex; }
+.bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(11,9,6,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--rule);display:flex;padding:10px 0 env(safe-area-inset-bottom,10px)}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 0;cursor:pointer;opacity:0.28;transition:opacity 0.15s}
+.ni.active{opacity:1}
+.ni-icon{font-size:18px}
+.ni-pip{width:4px;height:4px;border-radius:50%;background:var(--amber);opacity:0;transition:opacity 0.2s}
+.ni.active .ni-pip{opacity:1}
 
-  /* ── SPLASH ── */
-  #splash {
-    background: var(--ink);
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    animation: fadeOut 0.4s ease 1.8s forwards;
-  }
-  .splash-icon { font-size: 56px; animation: riseIn 0.6s ease 0.2s both; }
-  .splash-title {
-    font-family: 'Lora', serif;
-    font-size: 28px;
-    color: var(--cream);
-    letter-spacing: -0.5px;
-    animation: riseIn 0.6s ease 0.4s both;
-  }
-  .splash-sub {
-    font-size: 13px;
-    color: var(--ink-muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    animation: riseIn 0.6s ease 0.6s both;
-  }
+#recall{background:var(--bg);justify-content:space-between}
+.rc-top{display:flex;align-items:center;justify-content:space-between;padding:52px 28px 12px}
+.rc-back{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--mid);cursor:pointer;padding:8px 0;transition:color 0.15s}
+.rc-back:active{color:var(--text)}
+.rc-pills{display:flex;gap:6px;align-items:center}
+.rc-pill{height:2px;border-radius:1px;transition:all 0.35s ease}
+.rc-pill.done{background:var(--mid);width:20px}
+.rc-pill.active{background:var(--amber);width:32px}
+.rc-pill.todo{background:var(--dim);width:20px}
+.rc-main{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 28px 8px}
+.rc-type{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--amber);margin-bottom:24px}
+.rc-word{font-family:'Fraunces',serif;font-optical-sizing:auto;font-weight:700;color:var(--text);letter-spacing:-1.5px;line-height:0.95;margin-bottom:10px}
+.rc-word.sz-word{font-size:clamp(56px,16vw,78px)}
+.rc-word.sz-quote{font-size:clamp(20px,5.5vw,28px);font-style:italic;font-weight:300;letter-spacing:-0.2px;line-height:1.5}
+.rc-word.sz-concept{font-size:clamp(38px,10vw,54px)}
+.rc-amber-bar{width:40px;height:2px;background:var(--amber);margin-bottom:22px}
+.rc-phonetic{font-size:13px;font-weight:300;font-style:italic;color:var(--mid);margin-bottom:22px;margin-top:-6px}
+.rc-def{font-size:15px;font-weight:300;color:var(--mid);line-height:1.75;max-width:360px}
+.rc-source{margin-top:28px;padding-top:20px;border-top:1px solid var(--rule)}
+.rc-book{font-family:'Fraunces',serif;font-size:14px;font-weight:300;font-style:italic;color:rgba(237,232,223,0.38)}
+.rc-author{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-top:3px}
+.rc-btns{padding:12px 28px 44px;display:flex;flex-direction:column;gap:8px}
+.btn-got{width:100%;padding:18px;border-radius:3px;border:none;background:var(--amber);color:#0B0906;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:all 0.12s}
+.btn-got:active{background:var(--amber-b);transform:scale(0.985)}
+.btn-later{width:100%;padding:16px;border-radius:3px;border:1px solid var(--rule);background:transparent;color:var(--mid);font-family:'Syne',sans-serif;font-size:10px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;cursor:pointer;transition:all 0.12s}
+.btn-later:active{background:var(--bg2)}
 
-  /* ── HOME ── */
-  #home {
-    background: var(--cream);
-  }
-  .home-header {
-    padding: 56px 24px 20px;
-    background: var(--cream);
-  }
-  .home-greeting {
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    margin-bottom: 6px;
-  }
-  .home-title {
-    font-family: 'Lora', serif;
-    font-size: 26px;
-    font-weight: 600;
-    color: var(--ink);
-    line-height: 1.2;
-  }
-  .home-subtitle {
-    font-size: 14px;
-    color: var(--ink-muted);
-    margin-top: 4px;
-  }
+#done{background:var(--bg);align-items:center;justify-content:center;text-align:center;padding:40px 32px;gap:0}
+.done-eyebrow{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--amber);margin-bottom:12px;animation:fadeUp 0.5s ease both}
+.done-h{font-family:'Fraunces',serif;font-optical-sizing:auto;font-size:54px;font-weight:700;color:var(--text);letter-spacing:-2px;line-height:1.0;animation:blurIn 0.6s ease 0.1s both}
+.done-h em{font-style:italic;font-weight:300;color:var(--mid)}
+.done-p{font-size:14px;font-weight:300;color:var(--mid);line-height:1.65;max-width:250px;margin:12px auto 32px;animation:fadeUp 0.5s ease 0.2s both}
+.done-grid{display:flex;gap:1px;width:100%;margin-bottom:36px;animation:fadeUp 0.5s ease 0.3s both}
+.done-block{flex:1;padding:20px 8px;border:1px solid var(--rule);text-align:center}
+.done-block:first-child{border-radius:3px 0 0 3px}
+.done-block:last-child{border-radius:0 3px 3px 0}
+.done-n{font-family:'Fraunces',serif;font-size:42px;font-weight:700;color:var(--text);letter-spacing:-1px}
+.done-nl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+.btn-done-home{padding:16px 48px;border-radius:3px;border:1px solid var(--rule);background:transparent;color:var(--mid);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:all 0.15s;animation:fadeUp 0.5s ease 0.4s both}
+.btn-done-home:active{background:var(--bg2);color:var(--text)}
 
-  .streak-bar {
-    margin: 0 24px;
-    background: var(--amber-light);
-    border: 1px solid var(--amber-glow);
-    border-radius: 12px;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .streak-bar .icon { font-size: 20px; }
-  .streak-bar .text { font-size: 13px; color: var(--amber); font-weight: 500; }
-  .streak-bar .count { font-family: 'Lora', serif; font-size: 18px; font-weight: 600; color: var(--amber); margin-left: auto; }
-
-  .section-label {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    padding: 20px 24px 10px;
-  }
-
-  .scroll-area {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 100px;
-  }
-
-  .today-card {
-    margin: 0 24px 16px;
-    background: var(--ink);
-    border-radius: 20px;
-    padding: 24px;
-    cursor: pointer;
-    transition: transform 0.15s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .today-card::before {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 140px; height: 140px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 50%;
-  }
-  .today-card:active { transform: scale(0.98); }
-  .card-eyebrow {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(250,247,242,0.45);
-    margin-bottom: 12px;
-  }
-  .card-type-badge {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    background: rgba(194,112,15,0.25);
-    color: #FCD34D;
-    padding: 3px 8px;
-    border-radius: 20px;
-    margin-bottom: 14px;
-  }
-  .card-word {
-    font-family: 'Lora', serif;
-    font-size: 32px;
-    font-weight: 600;
-    color: var(--cream);
-    line-height: 1.15;
-    margin-bottom: 8px;
-  }
-  .card-quote {
-    font-family: 'Lora', serif;
-    font-size: 18px;
-    font-style: italic;
-    color: rgba(250,247,242,0.85);
-    line-height: 1.55;
-    margin-bottom: 8px;
-  }
-  .card-definition {
-    font-size: 14px;
-    color: rgba(250,247,242,0.6);
-    line-height: 1.6;
-    margin-bottom: 16px;
-  }
-  .card-source {
-    font-size: 11px;
-    color: rgba(250,247,242,0.35);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
-  .card-source span { color: rgba(250,247,242,0.55); }
-  .card-tap-hint {
-    font-size: 11px;
-    color: rgba(250,247,242,0.3);
-    margin-top: 16px;
-    text-align: right;
-    letter-spacing: 0.04em;
-  }
-
-  .mini-cards {
-    padding: 0 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .mini-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px 18px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .mini-card:active { transform: scale(0.985); background: var(--cream-dark); }
-  .mini-card-icon { font-size: 22px; flex-shrink: 0; }
-  .mini-card-content { flex: 1; min-width: 0; }
-  .mini-card-title {
-    font-family: 'Lora', serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .mini-card-meta { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
-  .mini-card-type {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 20px;
-    flex-shrink: 0;
-  }
-  .type-word { background: #EDE9FE; color: #6D28D9; }
-  .type-quote { background: #FCE7F3; color: #9D174D; }
-  .type-concept { background: #D1FAE5; color: #065F46; }
-
-  /* ── RECALL SCREEN ── */
-  #recall {
-    background: var(--cream);
-    justify-content: space-between;
-  }
-  .recall-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 56px 24px 16px;
-  }
-  .back-btn {
-    width: 36px; height: 36px;
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    background: white;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 16px;
-    transition: background 0.15s;
-  }
-  .back-btn:active { background: var(--cream-dark); }
-  .progress-pills {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-  }
-  .pill {
-    height: 4px;
-    border-radius: 2px;
-    background: var(--border);
-    transition: all 0.3s ease;
-  }
-  .pill.done { background: var(--ink); width: 16px; }
-  .pill.active { background: var(--amber); width: 24px; }
-  .pill.todo { background: var(--border); width: 16px; }
-
-  .recall-card-wrap {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    padding: 8px 24px;
-  }
-  .recall-card {
-    width: 100%;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 32px 28px;
-    box-shadow: var(--shadow-card);
-    animation: cardIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  }
-  .recall-type {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .recall-type::before {
-    content: '';
-    display: inline-block;
-    width: 20px; height: 1px;
-    background: var(--border);
-  }
-  .recall-word {
-    font-family: 'Lora', serif;
-    font-size: 38px;
-    font-weight: 600;
-    color: var(--ink);
-    line-height: 1.1;
-    margin-bottom: 6px;
-  }
-  .recall-phonetic {
-    font-size: 14px;
-    color: var(--ink-muted);
-    font-style: italic;
-    margin-bottom: 20px;
-  }
-  .recall-quote-text {
-    font-family: 'Lora', serif;
-    font-size: 20px;
-    font-style: italic;
-    color: var(--ink);
-    line-height: 1.6;
-    margin-bottom: 20px;
-    padding-left: 16px;
-    border-left: 2px solid var(--amber);
-  }
-  .recall-body {
-    font-size: 15px;
-    color: var(--ink-soft);
-    line-height: 1.7;
-    margin-bottom: 24px;
-  }
-  .recall-divider {
-    height: 1px;
-    background: var(--border);
-    margin: 20px 0;
-  }
-  .recall-source-block { }
-  .recall-source-book {
-    font-family: 'Lora', serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ink);
-  }
-  .recall-source-author {
-    font-size: 12px;
-    color: var(--ink-muted);
-    margin-top: 2px;
-  }
-
-  .recall-actions {
-    padding: 16px 24px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .btn-remember {
-    width: 100%;
-    padding: 17px;
-    border-radius: 16px;
-    border: none;
-    background: var(--ink);
-    color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    letter-spacing: 0.01em;
-  }
-  .btn-remember:active { transform: scale(0.98); opacity: 0.9; }
-  .btn-revisit {
-    width: 100%;
-    padding: 16px;
-    border-radius: 16px;
-    border: 1.5px solid var(--border);
-    background: transparent;
-    color: var(--ink-soft);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 400;
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-  .btn-revisit:active { background: var(--cream-dark); }
-
-  /* ── DONE SCREEN ── */
-  #done {
-    align-items: center;
-    justify-content: center;
-    background: var(--cream);
-    text-align: center;
-    padding: 40px 32px;
-    gap: 12px;
-  }
-  .done-icon { font-size: 64px; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
-  .done-title {
-    font-family: 'Lora', serif;
-    font-size: 26px;
-    font-weight: 600;
-    color: var(--ink);
-    animation: riseIn 0.5s ease 0.15s both;
-  }
-  .done-sub {
-    font-size: 15px;
-    color: var(--ink-muted);
-    line-height: 1.6;
-    max-width: 280px;
-    animation: riseIn 0.5s ease 0.25s both;
-  }
-  .done-stats {
-    display: flex;
-    gap: 20px;
-    margin-top: 8px;
-    animation: riseIn 0.5s ease 0.35s both;
-  }
-  .done-stat {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px 24px;
-    text-align: center;
-  }
-  .done-stat-num {
-    font-family: 'Lora', serif;
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--ink);
-  }
-  .done-stat-label { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
-  .btn-home {
-    margin-top: 8px;
-    padding: 16px 40px;
-    border-radius: 16px;
-    border: none;
-    background: var(--ink);
-    color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    animation: riseIn 0.5s ease 0.45s both;
-    transition: opacity 0.15s;
-  }
-  .btn-home:active { opacity: 0.85; }
-
-  /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: rgba(250,247,242,0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid var(--border);
-    display: flex;
-    padding: 8px 0 env(safe-area-inset-bottom, 8px);
-  }
-  .nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    padding: 6px 0;
-    cursor: pointer;
-    opacity: 0.4;
-    transition: opacity 0.15s;
-  }
-  .nav-item.active { opacity: 1; }
-  .nav-icon { font-size: 20px; }
-  .nav-label { font-size: 10px; font-weight: 500; color: var(--ink); letter-spacing: 0.04em; }
-
-  /* ── ANIMATIONS ── */
-  @keyframes riseIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeOut {
-    to { opacity: 0; pointer-events: none; display: none; }
-  }
-  @keyframes popIn {
-    from { opacity: 0; transform: scale(0.5); }
-    to { opacity: 1; transform: scale(1); }
-  }
-  @keyframes cardIn {
-    from { opacity: 0; transform: translateY(20px) scale(0.97); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .animate-in { animation: slideUp 0.4s cubic-bezier(0.34,1.1,0.64,1) both; }
+@keyframes blurIn{from{opacity:0;filter:blur(14px);transform:translateY(8px)}to{opacity:1;filter:blur(0);transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes heroIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes lineIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.blur-in{animation:blurIn 0.55s cubic-bezier(0.22,1,0.36,1) both}
+.fade-in{animation:fadeUp 0.4s ease both}
 </style>
 </head>
 <body>
 
-<!-- SPLASH -->
 <div class="screen active" id="splash">
-  <div class="splash-icon">📖</div>
-  <div class="splash-title">Kindle Recall</div>
-  <div class="splash-sub">Your library remembers</div>
+  <div class="sp-word">Recall</div>
+  <div class="sp-rule"></div>
+  <div class="sp-sub">Your library, remembered</div>
 </div>
 
-<!-- HOME -->
 <div class="screen" id="home">
-  <div class="scroll-area">
-    <div class="home-header animate-in">
-      <div class="home-greeting">Good morning</div>
-      <div class="home-title">Today's Recall</div>
-      <div class="home-subtitle">3 items ready for you</div>
-    </div>
-
-    <div class="streak-bar animate-in" style="animation-delay:0.05s">
-      <span class="icon">🔥</span>
-      <span class="text">Day streak</span>
-      <span class="count">7</span>
-    </div>
-
-    <div class="section-label" style="animation-delay:0.1s">Today's card</div>
-
-    <div class="today-card animate-in" style="animation-delay:0.12s" onclick="startRecall()">
-      <div class="card-eyebrow">Word · Atomic Habits</div>
-      <div class="card-type-badge">Word of the day</div>
-      <div class="card-word">Compounding</div>
-      <div class="card-definition">The process where small, consistent gains multiply over time into extraordinary results — applied here to habit formation.</div>
-      <div class="card-source">From <span>Atomic Habits</span> · James Clear</div>
-      <div class="card-tap-hint">Tap to begin today's session →</div>
-    </div>
-
-    <div class="section-label" style="animation-delay:0.15s">Also queued today</div>
-
-    <div class="mini-cards">
-      <div class="mini-card animate-in" style="animation-delay:0.17s" onclick="startRecall()">
-        <div class="mini-card-icon">💬</div>
-        <div class="mini-card-content">
-          <div class="mini-card-title">"We are what we repeatedly do"</div>
-          <div class="mini-card-meta">Thinking, Fast and Slow · Kahneman</div>
-        </div>
-        <div class="mini-card-type type-quote">Quote</div>
-      </div>
-      <div class="mini-card animate-in" style="animation-delay:0.21s" onclick="startRecall()">
-        <div class="mini-card-icon">💡</div>
-        <div class="mini-card-content">
-          <div class="mini-card-title">The Availability Heuristic</div>
-          <div class="mini-card-meta">Thinking, Fast and Slow · Kahneman</div>
-        </div>
-        <div class="mini-card-type type-concept">Concept</div>
-      </div>
-    </div>
+  <div class="home-top">
+    <div class="top-label" id="home-date">Today</div>
+    <div class="streak">🔥 7-day streak</div>
   </div>
-  <div class="bottom-nav">
-    <div class="nav-item active"><span class="nav-icon">📚</span><span class="nav-label">Today</span></div>
-    <div class="nav-item"><span class="nav-icon">🗂</span><span class="nav-label">Library</span></div>
-    <div class="nav-item"><span class="nav-icon">📈</span><span class="nav-label">Progress</span></div>
-    <div class="nav-item"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></div>
+  <div class="home-hero">
+    <div class="hero-big">3 things<br>to <em>remember</em><br>today.</div>
+  </div>
+  <div class="home-rule"></div>
+  <div class="home-scroll" id="home-list"></div>
+  <div class="bnav">
+    <div class="ni active"><div class="ni-icon">📚</div><div class="ni-pip"></div></div>
+    <div class="ni"><div class="ni-icon">🗂</div><div class="ni-pip"></div></div>
+    <div class="ni"><div class="ni-icon">📈</div><div class="ni-pip"></div></div>
+    <div class="ni"><div class="ni-icon">⚙️</div><div class="ni-pip"></div></div>
   </div>
 </div>
 
-<!-- RECALL SESSION -->
 <div class="screen" id="recall">
-  <div class="recall-top">
-    <div class="back-btn" onclick="showHome()">←</div>
-    <div class="progress-pills" id="pills"></div>
-    <div style="width:36px"></div>
+  <div class="rc-top">
+    <div class="rc-back" onclick="showHome()">← Back</div>
+    <div class="rc-pills" id="rc-pills"></div>
+    <div style="width:48px"></div>
   </div>
-  <div class="recall-card-wrap">
-    <div class="recall-card" id="recall-card"></div>
-  </div>
-  <div class="recall-actions">
-    <button class="btn-remember" onclick="markRemember()">Got it ✓</button>
-    <button class="btn-revisit" onclick="markRevisit()">Show me again later</button>
+  <div class="rc-main" id="rc-main"></div>
+  <div class="rc-btns">
+    <button class="btn-got" onclick="markGot()">Got it</button>
+    <button class="btn-later" onclick="markLater()">Show me again later</button>
   </div>
 </div>
 
-<!-- DONE -->
 <div class="screen" id="done">
-  <div class="done-icon">🎉</div>
-  <div class="done-title">Session complete!</div>
-  <div class="done-sub">You reviewed 3 items from your library. See you tomorrow.</div>
-  <div class="done-stats">
-    <div class="done-stat">
-      <div class="done-stat-num" id="stat-remember">0</div>
-      <div class="done-stat-label">Remembered</div>
-    </div>
-    <div class="done-stat">
-      <div class="done-stat-num" id="stat-revisit">0</div>
-      <div class="done-stat-label">Revisit</div>
-    </div>
+  <div class="done-eyebrow">Session complete</div>
+  <div class="done-h">Well<br><em>done.</em></div>
+  <div class="done-p">You reviewed 3 items from your library. See you tomorrow.</div>
+  <div class="done-grid">
+    <div class="done-block"><div class="done-n" id="d-got">0</div><div class="done-nl">Remembered</div></div>
+    <div class="done-block"><div class="done-n" id="d-later">0</div><div class="done-nl">To revisit</div></div>
+    <div class="done-block"><div class="done-n">7</div><div class="done-nl">Day streak</div></div>
   </div>
-  <button class="btn-home" onclick="showHome()">Back to home</button>
+  <button class="btn-done-home" onclick="showHome()">Back to home</button>
 </div>
 
 <script>
-const ITEMS = [
-  {
-    type: 'word',
-    word: 'Compounding',
-    phonetic: '/kəmˈpaʊndɪŋ/',
-    definition: 'The process by which small, consistent gains multiply over time into extraordinary results. In habit science, 1% better every day compounds to 37x better over a year.',
-    book: 'Atomic Habits',
-    author: 'James Clear'
-  },
-  {
-    type: 'quote',
-    quote: 'We are what we repeatedly do. Excellence, then, is not an act, but a habit.',
-    context: 'Aristotle as cited by Will Durant — framing the entire philosophy of habit as identity, not outcome.',
-    book: 'Thinking, Fast and Slow',
-    author: 'Daniel Kahneman'
-  },
-  {
-    type: 'concept',
-    word: 'The Availability Heuristic',
-    definition: 'We judge the likelihood of events based on how easily examples come to mind. Plane crashes feel more dangerous than car rides because they are more vivid — not because they are more frequent.',
-    book: 'Thinking, Fast and Slow',
-    author: 'Daniel Kahneman'
-  }
+const ITEMS=[
+  {type:'word',tag:'Word',word:'Compounding',phonetic:'/kəmˈpaʊndɪŋ/',def:'Small, consistent gains that multiply over time into extraordinary results. Applied to habits: 1% better every day compounds to 37× better over a year.',book:'Atomic Habits',author:'James Clear'},
+  {type:'quote',tag:'Quote',word:'"We are what we repeatedly do. Excellence, then, is not an act, but a habit."',def:"Aristotle as framed by Durant — the philosophy that identity precedes outcome. You don't rise to your goals, you fall to your systems.",book:'Thinking, Fast and Slow',author:'Daniel Kahneman'},
+  {type:'concept',tag:'Concept',word:'Availability Heuristic',def:"We judge the likelihood of events by how easily examples come to mind. Plane crashes feel more dangerous than car rides — not because they're more frequent, but because they're more vivid.",book:'Thinking, Fast and Slow',author:'Daniel Kahneman'}
 ];
+let cur=0,got=0,later=0;
+const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const d=new Date();
+document.getElementById('home-date').textContent=`${days[d.getDay()]} · ${months[d.getMonth()]} ${d.getDate()}`;
 
-let current = 0;
-let remembered = 0;
-let revisit = 0;
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+function buildList(){
+  const tagMap={word:'tag-w',quote:'tag-q',concept:'tag-c'};
+  document.getElementById('home-list').innerHTML=ITEMS.map((item,i)=>`
+    <div class="list-item" onclick="startRecall(${i})">
+      <div class="li-num">0${i+1}</div>
+      <div class="li-body">
+        <div class="li-title${item.type==='quote'?' ital':''}">${item.word}</div>
+        <div class="li-meta"><div class="li-dot"></div>${item.book} · ${item.author}</div>
+      </div>
+      <div class="li-tag ${tagMap[item.type]}">${item.tag}</div>
+      <div class="li-arrow">→</div>
+    </div>`).join('');
 }
 
-function showHome() { showScreen('home'); current = 0; remembered = 0; revisit = 0; }
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function showHome(){show('home');buildList()}
 
-function startRecall() {
-  current = 0;
-  remembered = 0;
-  revisit = 0;
-  showScreen('recall');
-  renderItem();
-  renderPills();
+function startRecall(startAt){
+  cur=startAt||0;got=0;later=0;
+  show('recall');renderCard();renderPills();
 }
 
-function renderPills() {
-  const pills = document.getElementById('pills');
-  pills.innerHTML = ITEMS.map((_, i) => {
-    let cls = i < current ? 'done' : i === current ? 'active' : 'todo';
-    return `<div class="pill ${cls}"></div>`;
+function renderPills(){
+  document.getElementById('rc-pills').innerHTML=ITEMS.map((_,i)=>{
+    let c=i<cur?'done':i===cur?'active':'todo';
+    return `<div class="rc-pill ${c}"></div>`;
   }).join('');
 }
 
-function renderItem() {
-  const item = ITEMS[current];
-  const card = document.getElementById('recall-card');
-  card.style.animation = 'none';
-  card.offsetHeight;
-  card.style.animation = '';
-
-  let html = `<div class="recall-type">${item.type === 'word' ? 'Word' : item.type === 'quote' ? 'Quote' : 'Concept'}</div>`;
-
-  if (item.type === 'word' || item.type === 'concept') {
-    html += `<div class="recall-word">${item.word}</div>`;
-    if (item.phonetic) html += `<div class="recall-phonetic">${item.phonetic}</div>`;
-    html += `<div class="recall-body">${item.definition}</div>`;
-  } else {
-    html += `<div class="recall-quote-text">${item.quote}</div>`;
-    html += `<div class="recall-body">${item.context}</div>`;
-  }
-
-  html += `<div class="recall-divider"></div>
-    <div class="recall-source-block">
-      <div class="recall-source-book">${item.book}</div>
-      <div class="recall-source-author">${item.author}</div>
+function renderCard(){
+  const item=ITEMS[cur];
+  const szMap={word:'sz-word',quote:'sz-quote',concept:'sz-concept'};
+  const m=document.getElementById('rc-main');
+  m.innerHTML=`
+    <div class="rc-type fade-in">${item.tag}</div>
+    <div class="rc-word ${szMap[item.type]} blur-in">${item.word}</div>
+    ${item.phonetic?`<div class="rc-phonetic fade-in">${item.phonetic}</div>`:''}
+    <div class="rc-amber-bar fade-in"></div>
+    <div class="rc-def fade-in">${item.def}</div>
+    <div class="rc-source fade-in">
+      <div class="rc-book">${item.book}</div>
+      <div class="rc-author">${item.author}</div>
     </div>`;
-
-  card.innerHTML = html;
+  m.querySelectorAll('.fade-in,.blur-in').forEach((el,i)=>{el.style.animationDelay=`${i*0.07}s`});
 }
 
-function markRemember() {
-  remembered++;
-  next();
-}
+function next(){cur++;if(cur>=ITEMS.length){document.getElementById('d-got').textContent=got;document.getElementById('d-later').textContent=later;show('done')}else{renderCard();renderPills()}}
+function markGot(){got++;next()}
+function markLater(){later++;next()}
 
-function markRevisit() {
-  revisit++;
-  next();
-}
-
-function next() {
-  current++;
-  if (current >= ITEMS.length) {
-    document.getElementById('stat-remember').textContent = remembered;
-    document.getElementById('stat-revisit').textContent = revisit;
-    showScreen('done');
-  } else {
-    renderItem();
-    renderPills();
-  }
-}
-
-// Auto-hide splash
-setTimeout(() => {
-  document.getElementById('splash').classList.remove('active');
-  showScreen('home');
-}, 2000);
+buildList();
+setTimeout(()=>{document.getElementById('splash').classList.remove('active');show('home')},2000);
 </script>
 </body>
 </html>
